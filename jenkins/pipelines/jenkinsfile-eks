@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Git Pulling') {
             steps {
-                git branch: 'main', url: 'https://github.com/Uj5Ghare/E2E-EKS-Three-Tier-DevSecOps-Project.git'
+                git branch: 'main', url: 'https://github.com/sau-skt/E2E-EKS-Three-Tier-DevSecOps-Project.git'
             }
         }
         stage('Init') {

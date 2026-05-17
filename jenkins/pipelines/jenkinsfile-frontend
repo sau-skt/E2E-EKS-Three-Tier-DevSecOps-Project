@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git credentialsId: 'GitHub', url: 'https://github.com/Uj5Ghare/E2E-EKS-Three-Tier-DevSecOps-Project.git'
+                git branch: 'main', url: 'https://github.com/sau-skt/E2E-EKS-Three-Tier-DevSecOps-Project.git'
             }
         }
         stage('Sonarqube Analysis') {
@@ -81,28 +81,26 @@ pipeline {
         }
         stage('Checkout Code') {
             steps {
-                git credentialsId: 'GitHub', url: 'https://github.com/Uj5Ghare/E2E-EKS-Three-Tier-DevSecOps-Project.git'
+                git branch: 'main', url: 'https://github.com/sau-skt/E2E-EKS-Three-Tier-DevSecOps-Project.git'
             }
         }
         stage('Update Deployment file') {
             environment {
                 GIT_REPO_NAME = 'E2E-EKS-Three-Tier-DevSecOps-Project'
-                GIT_USER_NAME = 'Uj5Ghare'
+                GIT_USER_NAME = 'sau-skt'
             }
             steps {
-                dir('k8s/eks/frontend') {
-                    withCredentials([string(credentialsId: 'gh-token', variable: 'GH_TOKEN')]) {
+                dir('k8s/manifests/frontend') {
+                    withCredentials([string(credentialsId: 'github', variable: 'GH_TOKEN')]) {
                         sh '''
-                            git config user.email "ujwal5ghare@gmail.com"
-                            git config user.name "Uj5Ghare"
+                            git config user.email "saurabhchatterjee18a@gmail.com"
+                            git config user.name "sau-skt"
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
-                            imageTag=$(grep -oP '(?<=frontend:)[^ ]+' deployment.yaml)
-                            echo $imageTag
-                            sed -i "s/${AWS_ECR_REPO_NAME}:${imageTag}/${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}/" deployment.yaml
+                            sed -i "s|image: .*${AWS_ECR_REPO_NAME}:.*|image: ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}|" deployment.yaml
                             git add deployment.yaml
                             git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                            git push https://${GH_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
+                            git push https://${GH_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
                         '''
                     }
                 }
