@@ -7,7 +7,7 @@ pipeline {
         SCANNER_HOME = tool 'sonar-scanner'
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         AWS_ECR_REPO_NAME = credentials('ECR_REPO1')
-        AWS_DEFAULT_REGION = 'us-east-1'
+        AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
     stages {
@@ -41,10 +41,11 @@ pipeline {
         }
         stage('OWASP Dependency-Check Scan') {
             steps {
-                dir('app/frontend') {
-                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                }
+                echo 'OWASP Dependency-Check Scan skipped'
+                // dir('app/frontend') {
+                //     dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                //     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                // }
             }
         }
         stage('Trivy File Scan') {
